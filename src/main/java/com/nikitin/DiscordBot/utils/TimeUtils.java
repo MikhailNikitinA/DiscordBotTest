@@ -6,6 +6,6 @@ public class TimeUtils {
     private static final Long MONTHS_INACTIVE = 2L;
 
     public static OffsetDateTime getOffsetBefore() {
-        return OffsetDateTime.now().minusMinutes(MONTHS_INACTIVE);
+        return OffsetDateTime.now().minusMonths(MONTHS_INACTIVE);
     }
 }
