@@ -40,10 +40,10 @@ public class InactiveCommand implements ChatCommand {
         OffsetDateTime before = TimeUtils.getOffsetBefore();
         OffsetDateTime after = OffsetDateTime.now();
 
-        Map<Long, Member> activeMembers = memberStatisticService.getActiveGuildUsersForPeriod(guild, before, after);
-        List<Member> inactiveMembers = memberStatisticService.getNonActiveNonBotMembers(guild, activeMembers);
-
-        sendInactiveMembersCount(chanel, inactiveMembers);
+//        Map<Long, Member> activeMembers = memberStatisticService.getActiveGuildUsersForPeriod(guild, before, after);
+//        List<Member> inactiveMembers = memberStatisticService.getNonActiveNonBotMembers(guild, activeMembers);
+//
+//        sendInactiveMembersCount(chanel, inactiveMembers);
     }
 
     private void sendInactiveMembersCount(MessageChannel chanel, List<Member> inactiveMembers) {

@@ -8,4 +8,8 @@ public class TimeUtils {
     public static OffsetDateTime getOffsetBefore() {
         return OffsetDateTime.now().minusMonths(MONTHS_INACTIVE);
     }
+
+    public static boolean isBetween(OffsetDateTime time, OffsetDateTime start, OffsetDateTime end){
+        return time.isAfter(start) && time.isBefore(end);
+    }
 }

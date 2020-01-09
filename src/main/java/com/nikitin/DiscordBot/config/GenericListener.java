@@ -16,7 +16,7 @@ import java.util.Set;
 public class GenericListener extends ListenerAdapter {
 
     private Set<ChatCommand> commands;
-    private ChatCommand noCommandFound;
+    private ChatCommand defaultTextCommand;
 
 
     @Override
@@ -29,7 +29,7 @@ public class GenericListener extends ListenerAdapter {
 
         if (event.isFromType(ChannelType.TEXT)) {
             getCommand(event.getMessage().getContentDisplay())
-                    .orElse(noCommandFound)
+                    .orElse(defaultTextCommand)
                     .onMessageReceived(event);
 
         }
