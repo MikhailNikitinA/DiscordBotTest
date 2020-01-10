@@ -65,7 +65,7 @@ public class DefaultTextCommand implements ChatCommand {
             return response;
         }
 
-        Pattern pattern = Pattern.compile(":[a-zA-Z0-9]*:");
+        Pattern pattern = Pattern.compile(":[a-zA-Z0-9]{1,200}:");
         Matcher matcher = pattern.matcher(response);
 
         StringBuffer stringBuffer = new StringBuffer();
