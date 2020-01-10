@@ -21,11 +21,11 @@
     },
     {
       "command": "!help",
-      "values": ["Поддерживаемые команды: '!help', '!когдастрим'"]
+      "values": ["Поддерживаемые команды: '!help', '!когдастрим', '!пека'"]
     },
     {
       "command": "!пека",
-      "values": [":peka: :peka: :peka:", ":peka2: :peka2: :peka2:",":rofl: :rofl: :rofl:"]
+      "values": [":peka:", ":peka2:",":rofl:"]
     }
   ]
 }
