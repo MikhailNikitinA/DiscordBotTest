@@ -1,8 +1,5 @@
 package com.nikitin.DiscordBot.service;
 
-import com.nikitin.DiscordBot.model.ChanelStatistic;
-import com.nikitin.DiscordBot.model.ChanelStatistic.ChanelMemberStatistic;
-import com.nikitin.DiscordBot.utils.MemberStatisticTransformer;
 import com.nikitin.DiscordBot.utils.TimeUtils;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,8 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.function.Function;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,14 +25,6 @@ public class MemberStatisticService {
     private static final int BATCH_SIZE = 90;
 
     private PermissionCheckService permissionCheckService;
-
-
-    public List<ChanelStatistic> getActiveGuildUsersForPeriod(Guild guild, OffsetDateTime startDate, OffsetDateTime endDate) {
-        Member selfMember = guild.getSelfMember();
-        return guild.getTextChannels().stream()
-                .map(c -> getActiveChannelUsersForPeriod(c, startDate, endDate, selfMember))
-                .collect(Collectors.toList());
-    }
 
     public List<Member> getNonActiveNonBotMembers(Guild guild, Map<Long, Member> activeMembers) {
         Set<Long> memberIds = activeMembers.keySet();
@@ -44,9 +36,7 @@ public class MemberStatisticService {
                 .collect(Collectors.toList());
     }
 
-    private ChanelStatistic getActiveChannelUsersForPeriod(MessageChannel channel, OffsetDateTime startDate, OffsetDateTime endDate, Member selfMember) {
-        ChanelStatistic chanelStatistic = new ChanelStatistic();
-        chanelStatistic.setName(channel.getName());
+    public boolean processChanelMessagesForPeriod(MessageChannel channel, Consumer<Message> messageConsumer, OffsetDateTime startDate, OffsetDateTime endDate) {
 
         List<Message> retrievedHistory;
         long latestMessageIdLong = channel.getLatestMessageIdLong();
@@ -54,13 +44,10 @@ public class MemberStatisticService {
         try {
             retrievedHistory = channel.getHistoryBefore(latestMessageIdLong, BATCH_SIZE).complete().getRetrievedHistory();
         } catch (InsufficientPermissionException e) {
-            System.out.println("Игнорирую канал " + channel.getName());
-            return chanelStatistic;
+            return false;
         }
 
         boolean messagesWithinTimeRange = true;
-        long messageCount = 0;
-
 
         while (!retrievedHistory.isEmpty() && messagesWithinTimeRange) {
 
@@ -68,38 +55,25 @@ public class MemberStatisticService {
                 OffsetDateTime timeCreated = message.getTimeCreated();
                 Member member = message.getMember();
 
-                messageCount++;
 
                 if (timeCreated.isAfter(startDate)
                         && timeCreated.isBefore(endDate)
                         && member != null
                         && !StringUtils.isEmpty(message.getId())) {
 
-
-                    Map<Long, ChanelMemberStatistic> allMembersStatistic = chanelStatistic.getMemberStatistics();
-
-                    ChanelMemberStatistic memberStatistic =
-                            allMembersStatistic
-                                    .getOrDefault(member.getIdLong(),
-                                            MemberStatisticTransformer.transform(member, message.getContentDisplay()));
-
-                    memberStatistic.setMessageCount(memberStatistic.getMessageCount() + 1);
-                    allMembersStatistic.put(memberStatistic.getId(), memberStatistic);
-
-
+                    messageConsumer.accept(message);
                 }
             }
             Message lastMessage = retrievedHistory.get(0);
             Message firstMessage = retrievedHistory.get(retrievedHistory.size() - 1);
+
             messagesWithinTimeRange = TimeUtils.isBetween(lastMessage.getTimeCreated(), startDate, endDate)
-                    &&  TimeUtils.isBetween(firstMessage.getTimeCreated(), startDate, endDate);
+                    && TimeUtils.isBetween(firstMessage.getTimeCreated(), startDate, endDate);
 
             latestMessageIdLong = Math.min(firstMessage.getIdLong(), lastMessage.getIdLong());
             retrievedHistory = channel.getHistoryBefore(latestMessageIdLong, BATCH_SIZE).complete().getRetrievedHistory();
         }
 
-        chanelStatistic.setTotalMessages(messageCount);
-
-        return chanelStatistic;
+        return true;
     }
 }

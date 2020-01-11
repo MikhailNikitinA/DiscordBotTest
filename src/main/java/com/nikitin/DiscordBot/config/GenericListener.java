@@ -28,10 +28,16 @@ public class GenericListener extends ListenerAdapter {
         }
 
         if (event.isFromType(ChannelType.TEXT)) {
+            try {
+
+
             getCommand(event.getMessage().getContentDisplay())
                     .orElse(defaultTextCommand)
                     .onMessageReceived(event);
-
+            } catch (Throwable e) {
+                System.out.println(e);
+                throw e;
+            }
         }
     }
 
@@ -49,6 +55,6 @@ public class GenericListener extends ListenerAdapter {
         return command.getCommandAliases()
                 .stream()
                 .map(String::toUpperCase)
-                .anyMatch(upperInput::equals);
+                .anyMatch(upperInput::startsWith);
     }
 }
