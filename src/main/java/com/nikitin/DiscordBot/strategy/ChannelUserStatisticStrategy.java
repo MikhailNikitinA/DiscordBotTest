@@ -67,9 +67,18 @@ public class ChannelUserStatisticStrategy implements IUserStatisticStrategy<Guil
 
     private void gatherStatisticFromMessage(HashMap<Long, ChanelMemberStatistic> userStatistics, ChannelStatistic cStat, Message m) {
         Member guildMember = m.getMember();
-        ChanelMemberStatistic newMember = MemberStatisticTransformer.transform(guildMember, m.getContentDisplay());
-        ChanelMemberStatistic member = userStatistics.getOrDefault(guildMember.getIdLong(), newMember);
+
+        ChanelMemberStatistic member = userStatistics.getOrDefault(guildMember.getIdLong(),
+                MemberStatisticTransformer.transform(guildMember));
+
         member.setMessageCount(member.getMessageCount() + 1);
+
+        ChanelMemberStatistic.LastMessage oldMessage = member.getLastMessage();
+        ChanelMemberStatistic.LastMessage newMessage = MemberStatisticTransformer.transform(m);
+        if (oldMessage == null || oldMessage.getOffsetDateTime().isBefore(newMessage.getOffsetDateTime())) {
+            member.setLastMessage(newMessage);
+        }
+
         userStatistics.put(guildMember.getIdLong(), member);
         cStat.setTotalMessages(cStat.getTotalMessages() + 1);
     }
