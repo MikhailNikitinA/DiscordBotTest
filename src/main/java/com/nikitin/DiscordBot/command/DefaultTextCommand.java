@@ -5,12 +5,11 @@ import com.nikitin.DiscordBot.model.DefaultMessages;
 import com.nikitin.DiscordBot.service.ChanelMessageService;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -43,6 +42,7 @@ public class DefaultTextCommand implements ChatCommand {
 
         String message = event.getMessage().getContentDisplay();
         if (StringUtils.isEmpty(message) || !message.trim().startsWith("!")) {
+            addRandomEmoji(event.getMessage(), event.getGuild());
             return;
         }
 
@@ -58,6 +58,20 @@ public class DefaultTextCommand implements ChatCommand {
             chanelMessageService.sendMessageToChanel(response, event.getChannel());
         }
 
+    }
+
+    private void addRandomEmoji(Message message, Guild guild) {
+        Random random = new Random();
+        if (guild == null || message == null || random.nextInt(100) != 42) {
+            return;
+        }
+
+        List<Emote> guildEmotes = guild.getEmotes();
+        if (guildEmotes.isEmpty()) {
+            return;
+        }
+
+        message.addReaction(guildEmotes.get(random.nextInt(guildEmotes.size()))).complete();
     }
 
     private String handleEmojis(String response, Guild guild) {
