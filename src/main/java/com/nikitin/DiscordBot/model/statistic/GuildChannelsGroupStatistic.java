@@ -23,6 +23,11 @@ public class GuildChannelsGroupStatistic {
             private String text;
             private String channelName;
             private OffsetDateTime offsetDateTime;
+
+            @Override
+            public String toString() {
+                return "Канал: '" + channelName +  "'. Cообщение='" + text + "'";
+            }
         }
 
     }

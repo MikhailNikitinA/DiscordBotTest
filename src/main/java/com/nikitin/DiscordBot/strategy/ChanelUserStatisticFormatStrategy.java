@@ -1,15 +1,19 @@
 package com.nikitin.DiscordBot.strategy;
 
 import com.nikitin.DiscordBot.model.CommandWithParameters;
-import com.nikitin.DiscordBot.model.DefaultMessages;
 import com.nikitin.DiscordBot.model.statistic.GuildChannelsGroupStatistic;
 import com.nikitin.DiscordBot.model.statistic.GuildChannelsGroupStatistic.ChanelMemberStatistic;
 import com.nikitin.DiscordBot.utils.Constants;
 import com.nikitin.DiscordBot.utils.Constants.Parameters;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 import static com.nikitin.DiscordBot.utils.Constants.Parameters.DAYS;
 
@@ -24,12 +28,17 @@ public class ChanelUserStatisticFormatStrategy implements IFormatStrategy<GuildC
     @Override
     public List<String> formatOutputMessages(GuildChannelsGroupStatistic userGroupStatistics, CommandWithParameters commandWithParameters) {
         List<String> result = new ArrayList<>();
-        String tittlePattern = "Команда {0}, статистика за {1} дней, основываясь на данных из сообщений";
-
-        String tittle = MessageFormat.format(tittlePattern,
-                commandWithParameters.getCommand(),
-                commandWithParameters.getParameters().get(DAYS));
+        String tittle = formatTittle(commandWithParameters);
         result.add(tittle);
+
+        if (commandWithParameters.getArguments().contains(Constants.Arguments.COUNT)) {
+            String countStatistic = formatCountStatistics(userGroupStatistics);
+        }
+
+//        if (commandWithParameters.getArguments().contains(Constants.Arguments.LIST)) {
+//            String
+//        }
+
         Long chanelMessagesCount = userGroupStatistics.getChannelStatistics().stream()
                 .map(GuildChannelsGroupStatistic.ChannelStatistic::getTotalMessages)
                 .filter(Objects::nonNull)
@@ -51,11 +60,38 @@ public class ChanelUserStatisticFormatStrategy implements IFormatStrategy<GuildC
         return result;
     }
 
+    private String formatCountStatistics(GuildChannelsGroupStatistic userGroupStatistics) {
+        List<GuildChannelsGroupStatistic.ChannelStatistic> channelStatistics = userGroupStatistics.getChannelStatistics();
+
+        return null;
+    }
+
+    @NotNull
+    private String formatTittle(CommandWithParameters commandWithParameters) {
+        String tittlePattern = "Команда {0}, статистика за {1} дней, основываясь на данных из сообщений";
+
+        return MessageFormat.format(tittlePattern,
+                commandWithParameters.getCommand(),
+                commandWithParameters.getParameters().get(DAYS));
+    }
+
     private String formatMemberData(ChanelMemberStatistic userData) {
         return MessageFormat.format("Пользователь ''{0}'', всего сообщений: {1}. Последнее сообщение: ''{2}''",
                 userData.getName(),
                 userData.getMessageCount(),
                 userData.getLastMessage());
+    }
+
+    private String formatChannelStatistic(GuildChannelsGroupStatistic.ChannelStatistic cs) {
+        if (!StringUtils.isEmpty(cs.getErrorMessage())) {
+            return MessageFormat.format("Ошибка чтения канала {0}: {1}",
+                    cs.getChannelName(),
+                    cs.getErrorMessage());
+        }
+
+        return MessageFormat.format("Канал {0}, всего сообщений: {1}",
+                cs.getChannelName(),
+                cs.getTotalMessages());
     }
 
 }
