@@ -2,6 +2,7 @@ package com.nikitin.DiscordBot.model.statistic;
 
 import lombok.Data;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,15 @@ public class GuildChannelsGroupStatistic {
         private Long id;
         private String name;
         private Long messageCount;
-        private String lastMessage;
+        private LastMessage lastMessage;
+
+        @Data
+        public static class LastMessage {
+            private String text;
+            private String channelName;
+            private OffsetDateTime offsetDateTime;
+        }
+
     }
 
     @Data
