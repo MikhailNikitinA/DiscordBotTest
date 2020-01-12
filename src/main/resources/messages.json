@@ -27,6 +27,10 @@
     {
       "command": "!пека",
       "values": [":peka:", ":peka2:",":rofl:"]
+    },
+    {
+      "command": "!спасибо",
+      "values": ["Спасибо Hidanka, Predator, Athene, Магистро и STin за помощь в разработке и тестировании бота."]
     }
   ]
 }

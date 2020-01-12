@@ -2,7 +2,6 @@ package com.nikitin.DiscordBot.service;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,13 @@ public class PermissionCheckService {
                 .map(GenericMessageEvent::getGuild)
                 .map(Guild::getSelfMember)
                 .map(member -> member.hasPermission(Permission.MESSAGE_WRITE))
+                .orElse(false);
+    }
+
+    public boolean hasMessageManagePermission(Guild guild) {
+        return Optional.ofNullable(guild)
+                .map(Guild::getSelfMember)
+                .map(member -> member.hasPermission(Permission.MESSAGE_MANAGE))
                 .orElse(false);
     }
 

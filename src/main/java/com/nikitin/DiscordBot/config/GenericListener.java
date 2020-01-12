@@ -1,8 +1,10 @@
 package com.nikitin.DiscordBot.config;
 
 import com.nikitin.DiscordBot.command.ChatCommand;
+import com.nikitin.DiscordBot.command.GuildMemberJoinMessageTypeCommand;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,7 @@ public class GenericListener extends ListenerAdapter {
 
     private Set<ChatCommand> commands;
     private ChatCommand defaultTextCommand;
+    private GuildMemberJoinMessageTypeCommand guildMemberJoinMessageTypeCommand;
 
 
     @Override
@@ -27,17 +30,18 @@ public class GenericListener extends ListenerAdapter {
             return;
         }
 
-        if (event.isFromType(ChannelType.TEXT)) {
-            try {
+        try {
+            if (event.isFromType(ChannelType.TEXT) && MessageType.DEFAULT.equals(event.getMessage().getType())) {
 
+                getCommand(event.getMessage().getContentDisplay())
+                        .orElse(defaultTextCommand)
+                        .onMessageReceived(event);
 
-            getCommand(event.getMessage().getContentDisplay())
-                    .orElse(defaultTextCommand)
-                    .onMessageReceived(event);
-            } catch (Throwable e) {
-                System.out.println(e);
-                throw e;
+            } else if (guildMemberJoinMessageTypeCommand.getMessageType().equals(event.getMessage().getType())) {
+                guildMemberJoinMessageTypeCommand.onMessageReceived(event);
             }
+        } catch (Throwable e) {
+            System.out.println(e);
         }
     }
 
