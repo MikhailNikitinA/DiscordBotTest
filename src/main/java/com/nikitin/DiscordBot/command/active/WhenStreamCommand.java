@@ -5,10 +5,7 @@ import com.nikitin.DiscordBot.utils.Constants;
 import com.nikitin.DiscordBot.utils.EmojiUtils;
 import com.nikitin.DiscordBot.utils.RandomUtils;
 import lombok.AllArgsConstructor;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildChannel;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
 
@@ -57,7 +54,13 @@ public class WhenStreamCommand implements ChatCommand {
                 return;
             } else if (daysWithoutStream >= Constants.STREAM_AWAITING_INTERVAL &&
                     RandomUtils.nextInt(10) == 1) {
-                String message = EmojiUtils.handleEmojis(MessageFormat.format("Серьезно, @RKane уже {0} дней нет стримов :pain:", daysWithoutStream), event.getGuild());
+                String caneMember =
+                        guild.getMembersByNickname("RKane", true)
+                        .stream()
+                        .findAny()
+                        .map(Member::getAsMention)
+                        .orElse("@RKane");
+                String message = EmojiUtils.handleEmojis(MessageFormat.format("Серьезно, {0} уже {1} дней нет стримов :pain:", caneMember, daysWithoutStream), event.getGuild());
                 chanelMessageService.sendMessageToChanel(message, event.getChannel());
                 return;
             }
