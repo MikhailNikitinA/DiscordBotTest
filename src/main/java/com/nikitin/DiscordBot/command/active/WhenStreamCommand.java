@@ -2,6 +2,7 @@ package com.nikitin.DiscordBot.command.active;
 
 import com.nikitin.DiscordBot.service.ChanelMessageService;
 import com.nikitin.DiscordBot.utils.Constants;
+import com.nikitin.DiscordBot.utils.EmojiUtils;
 import com.nikitin.DiscordBot.utils.RandomUtils;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
@@ -56,7 +57,7 @@ public class WhenStreamCommand implements ChatCommand {
                 return;
             } else if (daysWithoutStream >= Constants.STREAM_AWAITING_INTERVAL &&
                     RandomUtils.nextInt(10) == 1) {
-                String message = MessageFormat.format("Серьезно, @RKane уже {0} дней нет стримов :pain:", daysWithoutStream);
+                String message = EmojiUtils.handleEmojis(MessageFormat.format("Серьезно, @RKane уже {0} дней нет стримов :pain:", daysWithoutStream), event.getGuild());
                 chanelMessageService.sendMessageToChanel(message, event.getChannel());
                 return;
             }
