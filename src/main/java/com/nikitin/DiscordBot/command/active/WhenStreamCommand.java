@@ -54,13 +54,13 @@ public class WhenStreamCommand implements ChatCommand {
                 return;
             } else if (daysWithoutStream >= Constants.STREAM_AWAITING_INTERVAL &&
                     RandomUtils.nextInt(10) == 1) {
-                String caneMember =
+                String rKane =
                         guild.getMembersByNickname("RKane", true)
                         .stream()
                         .findAny()
                         .map(Member::getAsMention)
                         .orElse("@RKane");
-                String message = EmojiUtils.handleEmojis(MessageFormat.format("Серьезно, {0} уже {1} дней нет стримов :pain:", caneMember, daysWithoutStream), event.getGuild());
+                String message = EmojiUtils.handleEmojis(MessageFormat.format("Серьезно, {0} уже {1} дней нет стримов :pain:", rKane, daysWithoutStream), event.getGuild());
                 chanelMessageService.sendMessageToChanel(message, event.getChannel());
                 return;
             }
