@@ -50,12 +50,12 @@ public class WhenStreamCommand implements ChatCommand {
             Message anonsMessage = textAnonsChanel.getHistory().retrievePast(1).complete().get(0);
 
             OffsetDateTime lastAnounceTime = anonsMessage.getTimeCreated();
-            long daysWithoutStream = DAYS.between(OffsetDateTime.now(), lastAnounceTime);
+            long daysWithoutStream = DAYS.between(lastAnounceTime, OffsetDateTime.now());
             if (lastAnounceTime.isAfter(OffsetDateTime.now().minusHours(6))) {
                 chanelMessageService.sendMessageToChanel(event.getMember().getAsMention() + ": " + anonsMessage.getContentDisplay() + " (" + anonsMessage.getJumpUrl() + ")", event.getChannel());
                 return;
             } else if (daysWithoutStream >= Constants.STREAM_AWAITING_INTERVAL &&
-                    RandomUtils.nextInt(25) == 1) {
+                    RandomUtils.nextInt(10) == 1) {
                 String message = MessageFormat.format("Серьезно, @RKane уже {0} дней нет стримов :pain:", daysWithoutStream);
                 chanelMessageService.sendMessageToChanel(message, event.getChannel());
                 return;
