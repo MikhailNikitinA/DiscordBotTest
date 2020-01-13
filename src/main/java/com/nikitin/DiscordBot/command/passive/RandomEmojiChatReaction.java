@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 @Component
 public class RandomEmojiChatReaction implements ChatReaction {
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String message = event.getMessage().getContentDisplay();

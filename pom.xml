@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.nikitin</groupId>
 	<artifactId>DiscordBot</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<name>DiscordBot</name>
 	<description>Demo project for Spring Boot</description>
 

@@ -12,11 +12,11 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Component
 @AllArgsConstructor
@@ -50,7 +50,7 @@ public class WhenStreamCommand implements ChatCommand {
             Message anonsMessage = textAnonsChanel.getHistory().retrievePast(1).complete().get(0);
 
             OffsetDateTime lastAnounceTime = anonsMessage.getTimeCreated();
-            long daysWithoutStream = Duration.between(OffsetDateTime.now(), lastAnounceTime).get(ChronoUnit.DAYS);
+            long daysWithoutStream = DAYS.between(OffsetDateTime.now(), lastAnounceTime);
             if (lastAnounceTime.isAfter(OffsetDateTime.now().minusHours(6))) {
                 chanelMessageService.sendMessageToChanel(event.getMember().getAsMention() + ": " + anonsMessage.getContentDisplay() + " (" + anonsMessage.getJumpUrl() + ")", event.getChannel());
                 return;
