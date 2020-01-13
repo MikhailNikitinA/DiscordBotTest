@@ -3,6 +3,7 @@ package com.nikitin.DiscordBot.command.passive;
 import com.nikitin.DiscordBot.service.BadWordsRecognitionService;
 import com.nikitin.DiscordBot.service.ChanelMessageService;
 import com.nikitin.DiscordBot.service.PermissionCheckService;
+import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import java.text.MessageFormat;
 import java.util.Optional;
 
 @Component
+@AllArgsConstructor
 public class NonNSFWBadWordsBanChatReaction implements ChatReaction {
 
     private BadWordsRecognitionService badWordsRecognitionService;
