@@ -9,4 +9,8 @@ public class RandomUtils {
         Random random = new Random();
         return list.get(random.nextInt(list.size()));
     }
+
+    public static int nextInt(int bound) {
+        return new Random().nextInt(bound);
+    }
 }

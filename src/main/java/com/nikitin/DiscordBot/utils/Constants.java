@@ -21,4 +21,6 @@ public class Constants {
         public static final String TOP = "TOP";
         public static Integer TOP_DEFAULT = 5;
     }
+
+    public static Integer STREAM_AWAITING_INTERVAL = 10;
 }

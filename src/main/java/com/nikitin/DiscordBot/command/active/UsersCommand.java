@@ -1,7 +1,6 @@
-package com.nikitin.DiscordBot.command;
+package com.nikitin.DiscordBot.command.active;
 
 import com.nikitin.DiscordBot.model.CommandWithParameters;
-import com.nikitin.DiscordBot.model.statistic.UserGroupStatistics;
 import com.nikitin.DiscordBot.service.ChanelMessageService;
 import com.nikitin.DiscordBot.service.StrategyResolverService;
 import com.nikitin.DiscordBot.strategy.IFormatStrategy;

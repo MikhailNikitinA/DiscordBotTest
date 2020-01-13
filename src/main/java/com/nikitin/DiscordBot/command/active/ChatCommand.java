@@ -1,4 +1,4 @@
-package com.nikitin.DiscordBot.command;
+package com.nikitin.DiscordBot.command.active;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 

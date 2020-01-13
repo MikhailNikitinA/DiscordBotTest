@@ -1,7 +1,6 @@
 package com.nikitin.DiscordBot.config;
 
-import com.nikitin.DiscordBot.command.ChatCommand;
-import com.nikitin.DiscordBot.command.GuildMemberJoinMessageTypeCommand;
+import com.nikitin.DiscordBot.command.active.ChatCommand;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.MessageType;
@@ -19,7 +18,6 @@ public class GenericListener extends ListenerAdapter {
 
     private Set<ChatCommand> commands;
     private ChatCommand defaultTextCommand;
-    private GuildMemberJoinMessageTypeCommand guildMemberJoinMessageTypeCommand;
 
 
     @Override
@@ -37,8 +35,6 @@ public class GenericListener extends ListenerAdapter {
                         .orElse(defaultTextCommand)
                         .onMessageReceived(event);
 
-            } else if (guildMemberJoinMessageTypeCommand.getMessageType().equals(event.getMessage().getType())) {
-                guildMemberJoinMessageTypeCommand.onMessageReceived(event);
             }
         } catch (Throwable e) {
             System.out.println(e);

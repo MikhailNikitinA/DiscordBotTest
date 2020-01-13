@@ -1,6 +1,8 @@
-package com.nikitin.DiscordBot.command;
+package com.nikitin.DiscordBot.command.active;
 
 import com.nikitin.DiscordBot.service.ChanelMessageService;
+import com.nikitin.DiscordBot.utils.Constants;
+import com.nikitin.DiscordBot.utils.RandomUtils;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -9,7 +11,10 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,14 +45,22 @@ public class WhenStreamCommand implements ChatCommand {
 
         GuildChannel anonsChannel = guild.getGuildChannelById(RKANE_ANONS_CHANNEL_ID);
 
-        if (anonsChannel instanceof TextChannel) {
+        if (anonsChannel instanceof TextChannel && event.getMember() != null) {
             TextChannel textAnonsChanel = (TextChannel) anonsChannel;
             Message anonsMessage = textAnonsChanel.getHistory().retrievePast(1).complete().get(0);
 
-            if (anonsMessage.getTimeCreated().isAfter(OffsetDateTime.now().minusHours(6))) {
-                chanelMessageService.sendMessageToChanel(event.getMember().getAsMention() + ": " + anonsMessage.getJumpUrl(), event.getChannel());
+            OffsetDateTime lastAnounceTime = anonsMessage.getTimeCreated();
+            long daysWithoutStream = Duration.between(OffsetDateTime.now(), lastAnounceTime).get(ChronoUnit.DAYS);
+            if (lastAnounceTime.isAfter(OffsetDateTime.now().minusHours(6))) {
+                chanelMessageService.sendMessageToChanel(event.getMember().getAsMention() + ": " + anonsMessage.getContentDisplay() + " (" + anonsMessage.getJumpUrl() + ")", event.getChannel());
+                return;
+            } else if (daysWithoutStream >= Constants.STREAM_AWAITING_INTERVAL &&
+                    RandomUtils.nextInt(25) == 1) {
+                String message = MessageFormat.format("Серьезно, @RKane уже {0} дней нет стримов :pain:", daysWithoutStream);
+                chanelMessageService.sendMessageToChanel(message, event.getChannel());
                 return;
             }
+
 
         }
 
