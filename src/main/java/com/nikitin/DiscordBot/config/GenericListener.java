@@ -2,6 +2,7 @@ package com.nikitin.DiscordBot.config;
 
 import com.nikitin.DiscordBot.command.active.ChatCommand;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class GenericListener extends ListenerAdapter {
 
     private Set<ChatCommand> commands;
@@ -37,7 +39,7 @@ public class GenericListener extends ListenerAdapter {
 
             }
         } catch (Throwable e) {
-            System.out.println(e);
+            log.error("Error: ", e);
         }
     }
 

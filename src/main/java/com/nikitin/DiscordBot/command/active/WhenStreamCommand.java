@@ -5,6 +5,7 @@ import com.nikitin.DiscordBot.utils.Constants;
 import com.nikitin.DiscordBot.utils.EmojiUtils;
 import com.nikitin.DiscordBot.utils.RandomUtils;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class WhenStreamCommand implements ChatCommand {
 
     private ChatCommand defaultTextCommand;
@@ -34,6 +36,7 @@ public class WhenStreamCommand implements ChatCommand {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
+        log.info("Message: {}. User: {}", event.getMessage().getContentDisplay(), event.getAuthor().getName());
         Guild guild = event.getGuild();
 
         if (noAccessToRkaneAnonsChanel(guild)) {
