@@ -9,6 +9,7 @@ import java.util.Arrays;
 @Getter
 public enum GameMappings {
     WC3("WC3", "wc3_messages.json"),
+    GOTHIC("GOTHIC", "gothic_messages.json"),
     SILENCE("SILENCE", "");
 
     private String name;
