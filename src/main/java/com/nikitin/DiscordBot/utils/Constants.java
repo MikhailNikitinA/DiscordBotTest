@@ -15,11 +15,12 @@ public class Constants {
         public static final String SOURCE = "SOURCE";
         public static final String SOURCE_CHANNEL = "CHANNEL";
         public static final String SOURCE_GUILD = "GUILD";
-        public static String DAYS = "DAYS";
-        public static Integer DAYS_DEFAULT = 7;
-        public static Integer DAYS_MAX = 40;
+        public static final String DAYS = "DAYS";
+        public static final Integer DAYS_DEFAULT = 7;
+        public static final Integer DAYS_MAX = 40;
         public static final String TOP = "TOP";
-        public static Integer TOP_DEFAULT = 5;
+        public static final Integer TOP_DEFAULT = 5;
+        public static final String SWITCH_TO = "SWITCHTO";
     }
 
     public static Integer STREAM_AWAITING_INTERVAL = 10;

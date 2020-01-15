@@ -81,7 +81,11 @@ public class UsersCommand implements ChatCommand {
     }
 
     public String getValidationError(CommandWithParameters commandWithParameters) {
-        boolean hasSource = VALID_SOURCES.contains(commandWithParameters.getParameters().get(Parameters.SOURCE).toUpperCase());
+
+        boolean hasSource = VALID_SOURCES.contains(
+                commandWithParameters.getParameters()
+                        .getOrDefault(Parameters.SOURCE, SOURCE_GUILD)
+                        .toUpperCase());
         if (!hasSource) {
             return "Нет источника данных по пользователям, добавьте к команде source=X, где X=" + formatArray(VALID_SOURCES);
         }
