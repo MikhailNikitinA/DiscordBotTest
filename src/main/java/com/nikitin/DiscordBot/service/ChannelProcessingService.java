@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class MemberStatisticService {
+public class ChannelProcessingService {
 
     private static final int BATCH_SIZE = 90;
 
@@ -34,6 +34,24 @@ public class MemberStatisticService {
                 .filter(member -> !memberIds.contains(member.getIdLong()))
                 .filter(member -> !member.getUser().isBot())
                 .collect(Collectors.toList());
+    }
+
+    public boolean processLatestChanelMessages(MessageChannel channel, Consumer<Message> messageConsumer, int offset) {
+        if (offset > 99) {
+            throw new IllegalArgumentException();
+        }
+
+        List<Message> retrievedHistory;
+        long latestMessageIdLong = channel.getLatestMessageIdLong();
+
+        try {
+            retrievedHistory = channel.getHistoryBefore(latestMessageIdLong, offset).complete().getRetrievedHistory();
+        } catch (InsufficientPermissionException e) {
+            return false;
+        }
+
+        retrievedHistory.forEach(messageConsumer::accept);
+        return true;
     }
 
     public boolean processChanelMessagesForPeriod(MessageChannel channel, Consumer<Message> messageConsumer, OffsetDateTime startDate, OffsetDateTime endDate) {

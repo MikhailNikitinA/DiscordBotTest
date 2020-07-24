@@ -11,11 +11,15 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class EmojiUtils {
 
-    public static Optional<String> getGuildEmoji(String emojiText, Guild guild) {
-        return guild.getEmotesByName(emojiText.trim().substring(1, emojiText.trim().length()-1), true)
-                .stream()
-                .findFirst()
-                .map(Emote::getAsMention);
+    public static Optional<String> getGuildEmojiString(String emojiText, Guild guild) {
+        Optional<Emote> first = getGuildEmojiEmote(emojiText, guild);
+        return first.map(Emote::getAsMention);
+    }
+
+    public static Optional<Emote> getGuildEmojiEmote(String emojiText, Guild guild) {
+        return guild.getEmotesByName(emojiText.trim().substring(1, emojiText.trim().length() - 1), true)
+                    .stream()
+                    .findFirst();
     }
 
     public static String handleEmojis(String response, Guild guild) {
@@ -38,7 +42,7 @@ public class EmojiUtils {
     }
 
     public static String replaceEmoji(String replacementSmile, Guild guild) {
-        return getGuildEmoji(replacementSmile, guild)
+        return getGuildEmojiString(replacementSmile, guild)
                 .orElse(replacementSmile);
     }
 }

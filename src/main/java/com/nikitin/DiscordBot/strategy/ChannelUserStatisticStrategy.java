@@ -4,7 +4,7 @@ import com.nikitin.DiscordBot.model.CommandWithParameters;
 import com.nikitin.DiscordBot.model.statistic.GuildChannelsGroupStatistic;
 import com.nikitin.DiscordBot.model.statistic.GuildChannelsGroupStatistic.ChanelMemberStatistic;
 import com.nikitin.DiscordBot.model.statistic.GuildChannelsGroupStatistic.ChannelStatistic;
-import com.nikitin.DiscordBot.service.MemberStatisticService;
+import com.nikitin.DiscordBot.service.ChannelProcessingService;
 import com.nikitin.DiscordBot.utils.Constants;
 import com.nikitin.DiscordBot.utils.MemberStatisticTransformer;
 import com.nikitin.DiscordBot.utils.TimeUtils;
@@ -24,7 +24,7 @@ import static com.nikitin.DiscordBot.utils.Constants.Parameters.DAYS;
 @Component
 @AllArgsConstructor
 public class ChannelUserStatisticStrategy implements IUserStatisticStrategy<GuildChannelsGroupStatistic> {
-    private MemberStatisticService memberStatisticService;
+    private ChannelProcessingService channelProcessingService;
 
     @Override
     public String getArgumentType() {
@@ -49,7 +49,7 @@ public class ChannelUserStatisticStrategy implements IUserStatisticStrategy<Guil
             cStat.setChannelName(channel.getName());
             cStat.setTotalMessages(0L);
 
-            boolean success = memberStatisticService
+            boolean success = channelProcessingService
                     .processChanelMessagesForPeriod(channel,
                             m -> gatherStatisticFromMessage(userStatistics, cStat, m),
                             startDate, endDate);

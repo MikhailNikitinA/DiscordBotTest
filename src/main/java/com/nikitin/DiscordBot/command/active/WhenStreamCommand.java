@@ -1,6 +1,6 @@
 package com.nikitin.DiscordBot.command.active;
 
-import com.nikitin.DiscordBot.service.ChanelMessageService;
+import com.nikitin.DiscordBot.service.ChannelMessageService;
 import com.nikitin.DiscordBot.utils.Constants;
 import com.nikitin.DiscordBot.utils.EmojiUtils;
 import com.nikitin.DiscordBot.utils.RandomUtils;
@@ -23,10 +23,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 public class WhenStreamCommand implements ChatCommand {
 
     private ChatCommand defaultTextCommand;
-    private ChanelMessageService chanelMessageService;
-
-    private static Long RKANE_GUILD_ID = 475897248325173250L;
-    private static Long RKANE_ANONS_CHANNEL_ID = 656072627848478731L;
+    private ChannelMessageService channelMessageService;
 
     @Override
     public List<String> getCommandAliases() {
@@ -44,7 +41,7 @@ public class WhenStreamCommand implements ChatCommand {
             return;
         }
 
-        GuildChannel anonsChannel = guild.getGuildChannelById(RKANE_ANONS_CHANNEL_ID);
+        GuildChannel anonsChannel = guild.getGuildChannelById(Constants.RKANE_ANONS_CHANNEL_ID);
 
         if (anonsChannel instanceof TextChannel && event.getMember() != null) {
             TextChannel textAnonsChanel = (TextChannel) anonsChannel;
@@ -53,7 +50,7 @@ public class WhenStreamCommand implements ChatCommand {
             OffsetDateTime lastAnounceTime = anonsMessage.getTimeCreated();
             long daysWithoutStream = DAYS.between(lastAnounceTime, OffsetDateTime.now());
             if (lastAnounceTime.isAfter(OffsetDateTime.now().minusHours(6))) {
-                chanelMessageService.sendMessageToChanel(event.getMember().getAsMention() + ": " + anonsMessage.getContentDisplay() + " (" + anonsMessage.getJumpUrl() + ")", event.getChannel());
+                channelMessageService.sendMessageToChanel(event.getMember().getAsMention() + ": " + anonsMessage.getContentDisplay() + " (" + anonsMessage.getJumpUrl() + ")", event.getChannel());
                 return;
             } else if (daysWithoutStream >= Constants.STREAM_AWAITING_INTERVAL &&
                     RandomUtils.nextInt(10) == 1) {
@@ -64,7 +61,7 @@ public class WhenStreamCommand implements ChatCommand {
                         .map(Member::getAsMention)
                         .orElse("@RKane");
                 String message = EmojiUtils.handleEmojis(MessageFormat.format("Серьезно, {0} уже {1} дней нет стримов :pain:", rKane, daysWithoutStream), event.getGuild());
-                chanelMessageService.sendMessageToChanel(message, event.getChannel());
+                channelMessageService.sendMessageToChanel(message, event.getChannel());
                 return;
             }
 
@@ -76,7 +73,7 @@ public class WhenStreamCommand implements ChatCommand {
 
     private boolean noAccessToRkaneAnonsChanel(Guild guild) {
         return guild == null ||
-                !RKANE_GUILD_ID.equals(guild.getIdLong()) ||
-                guild.getGuildChannelById(RKANE_ANONS_CHANNEL_ID) == null;
+                !Constants.RKANE_GUILD_ID.equals(guild.getIdLong()) ||
+                guild.getGuildChannelById(Constants.RKANE_ANONS_CHANNEL_ID) == null;
     }
 }

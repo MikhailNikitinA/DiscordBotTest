@@ -1,11 +1,12 @@
 package com.nikitin.DiscordBot.command.passive;
 
 import com.nikitin.DiscordBot.service.BadWordsRecognitionService;
-import com.nikitin.DiscordBot.service.ChanelMessageService;
+import com.nikitin.DiscordBot.service.ChannelMessageService;
+import com.nikitin.DiscordBot.service.GuildSettingsService;
 import com.nikitin.DiscordBot.service.PermissionCheckService;
-import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -13,12 +14,24 @@ import java.text.MessageFormat;
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
-public class NonNSFWBadWordsBanChatReaction implements ChatReaction {
+public class NonNSFWBadWordsBanChatReaction extends AbstractChatReaction implements ChatReaction {
 
-    private BadWordsRecognitionService badWordsRecognitionService;
-    private ChanelMessageService chanelMessageService;
-    private PermissionCheckService permissionCheckService;
+    private final BadWordsRecognitionService badWordsRecognitionService;
+    private final ChannelMessageService channelMessageService;
+    private final PermissionCheckService permissionCheckService;
+
+    @Autowired
+    public NonNSFWBadWordsBanChatReaction(GuildSettingsService guildSettingsService, BadWordsRecognitionService badWordsRecognitionService, ChannelMessageService channelMessageService, PermissionCheckService permissionCheckService) {
+        super(guildSettingsService);
+        this.badWordsRecognitionService = badWordsRecognitionService;
+        this.channelMessageService = channelMessageService;
+        this.permissionCheckService = permissionCheckService;
+    }
+
+    @Override
+    public String getAlias() {
+        return "фильтр-чата";
+    }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -29,12 +42,20 @@ public class NonNSFWBadWordsBanChatReaction implements ChatReaction {
         if (!isNSFW
                 && !StringUtils.isEmpty(message)
                 && event.getMember() != null
+                && !sendByGuildMaster(event)
                 && badWordsRecognitionService.hasBadWords(message)) {
             if (!hideBadWords(event.getMessage(), event.getGuild())) {
-                chanelMessageService.sendMessageToChanel(event.getMember().getAsMention() + " - я сейчас Хиданку позову", channel);
+                channelMessageService.sendMessageToChanel(event.getMember().getAsMention() + " - я сейчас Хиданку позову", channel);
             }
-
         }
+    }
+
+    private boolean sendByGuildMaster(MessageReceivedEvent event){
+        if (event.getGuild().getOwner() == null) {
+            return false;
+        }
+
+        return event.getGuild().getOwner().equals(event.getMember());
     }
 
     private boolean hideBadWords(Message message, Guild guild) {
@@ -43,14 +64,14 @@ public class NonNSFWBadWordsBanChatReaction implements ChatReaction {
         }
         String censoredMessage = badWordsRecognitionService.maskBadWords(message.getContentDisplay());
         MessageChannel channel = message.getChannel();
-        chanelMessageService.delete(message);
+        channelMessageService.delete(message);
         String m = MessageFormat.format("{0} написал: ''{1}''. {2}",
                 Optional.ofNullable(message.getMember())
                         .map(Member::getAsMention)
                         .orElse("какой-то матершинник"),
                 censoredMessage,
                 badWordsRecognitionService.getBadWarning());
-        chanelMessageService.sendMessageToChanel(m, channel);
+        channelMessageService.sendMessageToChanel(m, channel);
         return true;
     }
 }

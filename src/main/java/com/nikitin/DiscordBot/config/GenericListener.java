@@ -1,5 +1,7 @@
 package com.nikitin.DiscordBot.config;
 
+import com.nikitin.DiscordBot.command.GenericCommand;
+import com.nikitin.DiscordBot.command.PrivateCommand;
 import com.nikitin.DiscordBot.command.active.ChatCommand;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,7 +21,8 @@ import java.util.Set;
 @Slf4j
 public class GenericListener extends ListenerAdapter {
 
-    private Set<ChatCommand> commands;
+    private Set<ChatCommand> chatCommands;
+    private Set<PrivateCommand> privateCommands;
     private ChatCommand defaultTextCommand;
 
 
@@ -31,19 +35,26 @@ public class GenericListener extends ListenerAdapter {
         }
 
         try {
-            if (event.isFromType(ChannelType.TEXT) && MessageType.DEFAULT.equals(event.getMessage().getType())) {
+            MessageType type = event.getMessage().getType();
+            if (event.isFromType(ChannelType.TEXT) && (MessageType.DEFAULT.equals(type) || MessageType.GUILD_MEMBER_JOIN.equals(type))) {
 
-                getCommand(event.getMessage().getContentDisplay())
+                getCommand(event.getMessage().getContentDisplay(), chatCommands)
                         .orElse(defaultTextCommand)
                         .onMessageReceived(event);
 
+
+
+            }
+            if (ChannelType.PRIVATE.equals(event.getChannelType())) {
+                getCommand(event.getMessage().getContentDisplay(), privateCommands)
+                        .ifPresent(c -> c.onMessageReceived(event));
             }
         } catch (Throwable e) {
             log.error("Error: ", e);
         }
     }
 
-    private Optional<ChatCommand> getCommand(String textInput) {
+    private <T extends GenericCommand> Optional<T> getCommand(String textInput, Collection<T> commands) {
         if (StringUtils.isEmpty(textInput)) {
             return Optional.empty();
         }
@@ -53,7 +64,7 @@ public class GenericListener extends ListenerAdapter {
                 .findAny();
     }
 
-    private boolean containsInput(ChatCommand command, String upperInput) {
+    private boolean containsInput(GenericCommand command, String upperInput) {
         return command.getCommandAliases()
                 .stream()
                 .map(String::toUpperCase)

@@ -1,13 +1,7 @@
 package com.nikitin.DiscordBot.command.active;
 
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import com.nikitin.DiscordBot.command.GenericCommand;
 
-import java.util.List;
-
-public interface ChatCommand {
-
-    List<String> getCommandAliases();
-
-    void onMessageReceived(MessageReceivedEvent event);
+public interface ChatCommand extends GenericCommand {
 
 }

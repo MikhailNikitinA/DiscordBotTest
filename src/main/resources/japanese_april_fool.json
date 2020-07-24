@@ -1,0 +1,28 @@
+{
+  "name": "GOTHIC",
+  "characters": [
+    {
+      "name": "Хз (общее)",
+      "messages": [
+        "NANI??",
+        "Nani?",
+        "Arigato  {0}",
+        "Onii-Chan {0}",
+        "Moshi moshi {0}",
+        "Soka, {0}",
+        "{0}",
+        "{0} baka '''⌐(ಠ۾ಠ)¬'''",
+        "Kawaii *.* {0}",
+        "Gomenasai, {0}",
+        "Gomenasai, {0}",
+        "Sugoi!",
+        "Itadakimasu!",
+        "Ikiro yo. ii mokuhyou ga dekita kocchi mo sono tsumori de san nenkan tappuri to shugyou suru sa, {0}",
+        "Omaetachi wa isshun de boku ni korosareru. wakatte irun da, {0}",
+        "{0}. Ore wa yaku nijuu nengo no mirai kara taimumashin ni notte yatte kita no desu.",
+        "Anata wa yahari honmono no saiyajin no senshi da, {0}",
+        "Omae wa mou shindeiru, {0}"
+      ]
+    }
+  ]
+}

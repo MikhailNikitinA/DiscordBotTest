@@ -2,7 +2,8 @@ package com.nikitin.DiscordBot.command.passive;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nikitin.DiscordBot.model.DefaultMessages;
-import com.nikitin.DiscordBot.service.ChanelMessageService;
+import com.nikitin.DiscordBot.service.ChannelMessageService;
+import com.nikitin.DiscordBot.service.GuildSettingsService;
 import com.nikitin.DiscordBot.utils.EmojiUtils;
 import com.nikitin.DiscordBot.utils.RandomUtils;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -15,14 +16,20 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class DefaultCommandChatReaction implements ChatReaction {
+public class DefaultCommandChatReaction extends AbstractChatReaction implements ChatReaction {
     private final DefaultMessages resourceFile;
-    private final ChanelMessageService chanelMessageService;
+    private final ChannelMessageService channelMessageService;
 
     @Autowired
-    public DefaultCommandChatReaction(ChanelMessageService chanelMessageService) throws IOException {
+    public DefaultCommandChatReaction(GuildSettingsService guildSettingsService, ChannelMessageService channelMessageService) throws IOException {
+        super(guildSettingsService);
         this.resourceFile = new ObjectMapper().readValue(new ClassPathResource("messages.json").getInputStream(), DefaultMessages.class);
-        this.chanelMessageService = chanelMessageService;
+        this.channelMessageService = channelMessageService;
+    }
+
+    @Override
+    public String getAlias() {
+        return "обычные-текстовые-команды";
     }
 
     @Override
@@ -35,7 +42,7 @@ public class DefaultCommandChatReaction implements ChatReaction {
 
         if (!responses.isEmpty()) {
             String response = EmojiUtils.handleEmojis(RandomUtils.getRandomValue(responses), event.getGuild());
-            chanelMessageService.sendMessageToChanel(response, event.getChannel());
+            channelMessageService.sendMessageToChanel(response, event.getChannel());
         }
     }
 }

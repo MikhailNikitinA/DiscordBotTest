@@ -1,7 +1,7 @@
 package com.nikitin.DiscordBot.command.active;
 
 import com.nikitin.DiscordBot.model.CommandWithParameters;
-import com.nikitin.DiscordBot.service.ChanelMessageService;
+import com.nikitin.DiscordBot.service.ChannelMessageService;
 import com.nikitin.DiscordBot.service.StrategyResolverService;
 import com.nikitin.DiscordBot.strategy.IFormatStrategy;
 import com.nikitin.DiscordBot.strategy.IUserStatisticStrategy;
@@ -28,7 +28,7 @@ public class UsersCommand implements ChatCommand {
     @Autowired
     private StrategyResolverService resolverService;
     @Autowired
-    private ChanelMessageService chanelMessageService;
+    private ChannelMessageService channelMessageService;
 
     private static final List<String> VALID_SOURCES = Arrays.asList(Parameters.SOURCE_CHANNEL, Parameters.SOURCE_GUILD);
     private static final List<String> VALID_USER_TYPES = Arrays.asList(Arguments.ACTIVE, Arguments.INACTIVE, Arguments.ALL);
@@ -44,7 +44,6 @@ public class UsersCommand implements ChatCommand {
     public void onMessageReceived(MessageReceivedEvent event) {
         String message = event.getMessage().getContentDisplay();
         CommandWithParameters commandWithParameters = CommandWithParametersParser.parseCommand(message);
-        System.out.println("Before validation");
 
         if (!isValid(event.getChannel(), commandWithParameters)) {
             return;
@@ -58,16 +57,13 @@ public class UsersCommand implements ChatCommand {
 
         String infoSource = parameters.get(Parameters.SOURCE);
 
-        System.out.println("gathering stats");
         IUserStatisticStrategy statisticStrategy = resolverService.getUserStatisticStrategy(infoSource).orElseThrow(IllegalArgumentException::new);
         Object statistic = statisticStrategy.getStatistic(event, commandWithParameters);
 
-        System.out.println("gathering format strategy");
         IFormatStrategy formatStrategy = resolverService.getFormatStrategy(statistic);
         List<String> responses = formatStrategy.formatOutputMessages(statistic, commandWithParameters);
 
-        System.out.println("Printing");
-        responses.forEach(m -> chanelMessageService.sendMessageToChanel(m, event.getChannel()));
+        responses.forEach(m -> channelMessageService.sendMessageToChanel(m, event.getChannel()));
     }
 
     private void augmentDefaultValues(Map<String, String> parameters, List<String> arguments) {
@@ -110,7 +106,7 @@ public class UsersCommand implements ChatCommand {
     private boolean isValid(MessageChannel chanel, CommandWithParameters commandWithParameters) {
         String validationError = getValidationError(commandWithParameters);
         if (validationError != null) {
-            String infoMessage = MessageFormat.format("Вид команды: '!users userType{0} " +
+            String infoMessage = MessageFormat.format("Вид команды: '!users userType {0} " +
                             "source{8}sourceType{1}' " +
                             "days{8}int(Optional, defaultValue: {2}, maxValue: {3}) " +
                             "operationType{4}(Optional, defaultValue: {5}) " +
@@ -124,8 +120,8 @@ public class UsersCommand implements ChatCommand {
                     Arguments.LIST.toLowerCase(),
                     Parameters.TOP_DEFAULT,
                     Constants.PARAMS_SEPARATOR);
-            chanelMessageService.sendMessageToChanel(validationError, chanel);
-            chanelMessageService.sendMessageToChanel(infoMessage, chanel);
+            channelMessageService.sendMessageToChanel(validationError, chanel);
+            channelMessageService.sendMessageToChanel(infoMessage, chanel);
             return false;
         }
         return true;

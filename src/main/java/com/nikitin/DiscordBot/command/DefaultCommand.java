@@ -2,6 +2,7 @@ package com.nikitin.DiscordBot.command;
 
 import com.nikitin.DiscordBot.command.active.ChatCommand;
 import com.nikitin.DiscordBot.command.passive.ChatReaction;
+import com.nikitin.DiscordBot.service.GuildSettingsService;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.context.annotation.Primary;
@@ -16,6 +17,7 @@ import java.util.List;
 public class DefaultCommand implements ChatCommand {
 
     private List<ChatReaction> chatReactions;
+    private GuildSettingsService guildSettingsService;
 
     @Override
     public List<String> getCommandAliases() {
@@ -24,7 +26,10 @@ public class DefaultCommand implements ChatCommand {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        chatReactions.forEach(chatReaction -> chatReaction.onMessageReceived(event));
+        chatReactions
+                .stream()
+                .filter(cr -> guildSettingsService.isEnabled(event.getGuild().getIdLong(), cr.getAlias()))
+                .forEach(chatReaction -> chatReaction.onMessageReceived(event));
     }
 
 
