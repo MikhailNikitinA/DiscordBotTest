@@ -63,11 +63,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.himalay</groupId>
-            <artifactId>jphash</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
@@ -75,7 +70,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.1.0_95</version>
+            <version>4.1.1_101</version>
         </dependency>
 
         <dependency>
@@ -109,13 +104,6 @@
             <version>RELEASE</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.luciad.imageio</groupId>
-            <artifactId>luciad-webp-imageio</artifactId>
-            <version>1.0-SNAPSHOW</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/luciad-webp-imageio.jar</systemPath>
-        </dependency>
 
     </dependencies>
 

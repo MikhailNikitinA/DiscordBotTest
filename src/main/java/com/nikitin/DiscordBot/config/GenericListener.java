@@ -25,10 +25,14 @@ public class GenericListener extends ListenerAdapter {
     private Set<PrivateCommand> privateCommands;
     private ChatCommand defaultTextCommand;
 
+    static {
+        log.info("CLASSINIT");
+    }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
+        log.debug(String.valueOf(event));
         if (event.getAuthor().isBot()) {
             //Hide bot spam
             return;
